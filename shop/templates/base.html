@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Просто яблоко{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <!-- Условное отображение ссылок -->
+        {% if user.is_authenticated %}
+            Привет, {{ user.username }}! <a href="{% url 'logout' %}">Выход</a>
+        {% else %}
+            <a href="{% url 'login' %}">Вход</a> | <a href="{% url 'register' %}">Регистрация</a>
+        {% endif %}
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали заказа</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .order-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #4a90e2;
+        }
+        p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="order-container">
+        <h1>Детали заказа</h1>
+        <p><strong>Продукт:</strong> {{ order.product.name }}</p>
+        <p><strong>Количество:</strong> {{ order.quantity }}</p>
+        <p><strong>Статус:</strong> {{ order.status }}</p>
+        <p><strong>Дата заказа:</strong> {{ order.created_at }}</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #c5c5f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f09b9b;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .info {
+            margin-bottom: 20px;
+        }
+        .orders {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .order {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .order:last-child {
+            border-bottom: none;
+        }
+        .order-status {
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Добро пожаловать в личный кабинет!</h1>
+        <div class="info">
+            <p>Имя пользователя: {{ user.username }}</p>
+            <p>Email: {{ user.email }}</p>
+        </div>
+        <div class="orders">
+            <h2>Ваши заказы:</h2>
+            {% for order in orders %}
+                <div class="order">
+                    <p>Продукт: {{ order.product.name }}</p>
+                    <p>Количество: {{ order.quantity }}</p>
+                    <p>Статус: <span class="order-status">{{ order.status }}</span></p>
+                </div>
+            {% empty %}
+                <p>У вас нет заказов.</p>
+            {% endfor %}    

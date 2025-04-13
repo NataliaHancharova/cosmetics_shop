@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #3ed386; 
+            text-align: center;
+        }
+        h1 {
+            color: #053102; 
+            margin-top: 20px;
+        }
+        .button-container {
+            margin: 20px auto;
+        }
+        .button {
+            background-color: #2fe21b; 
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #011b0f; /* Темнее при наведении */
+        }
+    </style>
+</head>
+<body>
+    <h1>Добро пожаловать в наш интернет-магазин Просто яблоко!</h1>
+    <p>Здесь вы можете найти лучшие предложения косметики.</p>
+    <p>Пожалуйста, <a href="{% url 'login' %}">войдите</a> или <a href="{% url 'register' %}">зарегистрируйтесь</a>, чтобы начать покупки.</p>
+    <p>Если у вас уже есть аккаунт, вы можете <a href="{% url 'dashboard' %}">перейти в личный кабинет</a>.</p>
+
+    <h1>Продукты</h1>
+    <ul>
+        {% for product in products %}
+        <li>
+            <h2>{{ product.name }}</h2>
+            <p>{{ product.description }}</p>
+            <p>Цена: {{ product.price }} руб.</p>
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 200px; height: auto;">
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="button-container">
+        <a href="{% url 'products' %}" class="button">Посмотреть все продукты</a>
+        <a href="{% url 'cart' %}" class="button">Корзина</a>
+</body>
+</html>
