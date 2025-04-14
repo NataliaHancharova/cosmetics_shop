@@ -13,8 +13,10 @@
         {% for error in form.non_field_errors %}
             <div class="error">{{ error }}</div>
         {% endfor %}
-        <button type="submit">Зарегистрироваться</button>
+        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+        <button type="reset" class="btn btn-secondary">Сбросить</button>
     </form>
     <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+    <a href="{% url 'home' %}" class="btn btn-link">На главную</a>
 </body>
 </html>

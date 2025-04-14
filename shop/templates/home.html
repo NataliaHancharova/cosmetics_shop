@@ -42,7 +42,7 @@
     <p>Если у вас уже есть аккаунт, вы можете <a href="{% url 'dashboard' %}">перейти в личный кабинет</a>.</p>
 
     <h1>Продукты</h1>
-    <ul>
+    <ul> 
         {% for product in products %}
         <li>
             <h2>{{ product.name }}</h2>
@@ -55,5 +55,12 @@
     <div class="button-container">
         <a href="{% url 'products' %}" class="button">Посмотреть все продукты</a>
         <a href="{% url 'cart' %}" class="button">Корзина</a>
+        <a href="{% url 'order_history' %}" class="button">История заказов</a>  
+    </div>
+    <div class="button-container">
+        <a href="{% url 'home' %}" class="button">На главную</a> 
+    </div>
+    <footer style="margin-top: 20px; color: #053102;">
+        <p>&copy; 2023 Просто яблоко. Все права защищены.</p>   
 </body>
 </html>

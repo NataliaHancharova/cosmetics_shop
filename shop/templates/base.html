@@ -7,7 +7,6 @@
 </head>
 <body>
     <header>
-        <!-- Условное отображение ссылок -->
         {% if user.is_authenticated %}
             Привет, {{ user.username }}! <a href="{% url 'logout' %}">Выход</a>
         {% else %}

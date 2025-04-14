@@ -98,9 +98,22 @@ def view_cart(request): # Получение корзины пользовате
     total_price = sum(item.product.price * item.quantity for item in cart_products)
     return render(request, 'cart.html', {'cart_products': cart_products, 'total_price': total_price})
 
-@login_required
-def checkout(request): # Логика оформления заказа
-   return render(request, 'checkout.html')
+# 
+
+def checkout(request):
+    cart = Cart.objects.get(user=request.user)
+    cart_products = CartProduct.objects.filter(cart=cart)
+    total_price = sum(item.product.price * item.quantity for item in cart_products)
+
+    if request.method == 'POST':
+        order = Order.objects.create(user=request.user, total_price=total_price)
+        for item in cart_products:
+            order.products.add(item.product)  # Assuming 'products' is a ManyToManyField in the Order model
+        order.save()
+        cart_products.delete()  # Очистка корзины после оформления заказа
+        return redirect('order_confirmation')  # Перенаправление на страницу подтверждения
+
+    return render(request, 'checkout.html', {'cart_products': cart_products, 'total_price': total_price})
 
 def products(request):
     products = Product.objects.all()  # Получение всех продуктов

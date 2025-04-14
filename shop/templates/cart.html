@@ -26,7 +26,7 @@
                         <td>{{ item.product.name }}</td>
                         <td>{{ item.quantity }}</td>
                         <td>{{ item.product.price }}</td>
-                        <td>{{ item.quantity|floatformat:2|add:item.product.price }}</td>
+                        <td>{{ item.quantity|floatformat:2|mul:item.product.price }}</td>
                         <td>
                             <form method="post" action="{% url 'remove_from_cart' item.product.id %}">
                                 {% csrf_token %}
@@ -45,4 +45,8 @@
             <a href="{% url 'shop' %}" class="btn btn-primary">Продолжить покупки</a>
             {% if cart_products %}
                 <a href="{% url 'checkout' %}" class="btn btn-success">Оформить заказ</a>
-            {% endif %} 
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
