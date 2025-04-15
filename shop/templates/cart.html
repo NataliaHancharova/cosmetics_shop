@@ -23,15 +23,22 @@
                 <tbody>
                     {% for item in cart_products %}
                     <tr>
-                        <td>{{ item.product.name }}</td>
+                        <td>
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 100px; height: auto;">
+                            {% endif %}
+                            {{ item.product.name }}
+                        </td>
                         <td>{{ item.quantity }}</td>
                         <td>{{ item.product.price }}</td>
                         <td>{{ item.quantity|floatformat:2 }}</td>
+                        <td>{{ item.product.price }}</td>
                         <td>
                             <form method="post" action="{% url 'remove_from_cart' item.product.id %}">
                                 {% csrf_token %}
                                 <button class="btn btn-danger btn-sm">Удалить</button>
                             </form>
+                        <td>{{ item.produc}}</td>
                         </td>
                     </tr>
                     {% endfor %}

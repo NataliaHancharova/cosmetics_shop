@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from .models import Product, Cart, CartProduct
 from django.contrib.auth.password_validation import validate_password
 from django.contrib import messages
-
+from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
     products = Product.objects.all()  # Получение всех продуктов
@@ -76,6 +76,7 @@ def order_history(request):  # Получение истории заказов 
     orders = Order.objects.filter(user=request.user)
     return render(request, 'order_history.html', {'orders': orders})
 
+@login_required
 def order_detail(request, order_id): # Получение конкретного заказа пользователя или 404, если заказ не найден
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, 'order_detail.html', {'order': order})
@@ -83,15 +84,30 @@ def order_detail(request, order_id): # Получение конкретного
 def order_confirmation(request):
     return render(request, 'order_confirmation.html')
 
-def add_to_cart(request, product_id):  # Добавление продукта в корзину
-    product = get_object_or_404(Product, id=product_id)
-    cart, _ = Cart.objects.get_or_create(user=request.user)
-    cart_product, _ = CartProduct.objects.get_or_create(cart=cart, product=product)
-    cart_product.quantity += 1
-    cart_product.save()
-    return redirect('cart')
+
+
+@csrf_exempt
+def add_to_cart(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        cart_product, _ = CartProduct.objects.get_or_create(cart=cart, product=product)
+        cart_product.quantity += 1
+        cart_product.save()
+        return redirect('cart')
+    return HttpResponse(status=405) 
+
+# def add_to_cart(request, product_id):  # Добавление продукта в корзину
+#     product = get_object_or_404(Product, id=product_id)
+#     cart, created = Cart.objects.get_or_create(user=request.user)  # Получение или создание корзины для пользователя
+#     # cart, _ = Cart.objects.get_or_create(user=request.user)
+#     cart_product, _ = CartProduct.objects.get_or_create(cart=cart, product=product)
+#     cart_product.quantity += 1
+#     cart_product.save()
+#     return redirect('cart')
 
 def remove_from_cart(request, product_id): # Удаление продукта из корзины
+    cart, _ = Cart.objects.get_or_create(user=request.user)
     cart = get_object_or_404(Cart, user=request.user)
     cart_product = get_object_or_404(CartProduct, cart=cart, product_id=product_id)
     cart_product.delete()
@@ -112,7 +128,7 @@ def view_cart(request):
         })
         total_price += item_total
 
-    return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
+    return render(request, 'cart.html', {'cart_products': cart_items, 'total_price': total_price})
 
 
 @login_required
@@ -132,7 +148,6 @@ def checkout(request):
                 order.products.add(item.product)
             order.save()
             cart_products.delete()
-            cart.delete()
             return redirect('order_confirmation')
 
         return render(request, 'checkout.html', {'cart_products': cart_products, 'total_price': total_price})
@@ -143,7 +158,7 @@ def checkout(request):
 def products(request):
     products = Product.objects.all()  # Получение всех продуктов
     return render(request, 'products.html', {'products': products})
-
+@login_required
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'product_detail.html', {'product': product})
