@@ -21,9 +21,11 @@ def register_with_form(request): # Регистрация пользовател
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
             messages.success(request, 'Вы успешно зарегистрировались! Теперь вы можете войти.')  # Сохранение пользователя в базе данных
-            return redirect('login') 
+            login(request, user)  # Автоматический вход после регистрации
+            return redirect('profile')  # Перенаправляем на профиль
+            # return redirect('login') 
         else:
             messages.error(request, 'Исправьте ошибки в форме.')
     else:
@@ -85,7 +87,7 @@ def order_confirmation(request):
     return render(request, 'order_confirmation.html')
 
 
-
+@login_required
 @csrf_exempt
 def add_to_cart(request, product_id):
     if request.method == 'POST':
@@ -94,7 +96,8 @@ def add_to_cart(request, product_id):
         cart_product, _ = CartProduct.objects.get_or_create(cart=cart, product=product)
         cart_product.quantity += 1
         cart_product.save()
-        return redirect('cart')
+        return render(request, 'add_to_card.html', {'product': product})
+        # return redirect('cart')
     return HttpResponse(status=405) 
 
 # def add_to_cart(request, product_id):  # Добавление продукта в корзину
@@ -158,6 +161,7 @@ def checkout(request):
 def products(request):
     products = Product.objects.all()  # Получение всех продуктов
     return render(request, 'products.html', {'products': products})
+
 @login_required
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
