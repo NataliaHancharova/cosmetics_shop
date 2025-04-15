@@ -5,26 +5,29 @@ from .models import Order
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
-from .forms import CustomUserCreationForm
+from .forms import UserCreationForm
 from django.http import HttpResponse
 from .models import Product, Cart, CartProduct
 from django.contrib.auth.password_validation import validate_password
+from django.contrib import messages
+
 
 def home(request):
     products = Product.objects.all()  # Получение всех продуктов
     return render(request, 'home.html', {'products': products})
 
-def register(request): # Регистрация пользователя без использования формы
-    return HttpResponse("Register page")
 
 def register_with_form(request): # Регистрация пользователя с использованием формы
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()  # Сохранение пользователя в базе данных
-            return redirect('login')  # Перенаправление на страницу входа
+            form.save()
+            messages.success(request, 'Вы успешно зарегистрировались! Теперь вы можете войти.')  # Сохранение пользователя в базе данных
+            return redirect('login') 
+        else:
+            messages.error(request, 'Исправьте ошибки в форме.')
     else:
-        form = CustomUserCreationForm()
+        form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
 
 def create_user(username, email, password): # Создание пользователя
@@ -46,7 +49,7 @@ def user_login(request): # Вход пользователя
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
-            return redirect('home')
+            return redirect('dashboard')  # Перенаправление на страницу профиля после успешного входа
         else:
             return render(request, 'login.html', {'form': form, 'error': 'Неверный логин или пароль.'})
     else:
@@ -77,6 +80,9 @@ def order_detail(request, order_id): # Получение конкретного
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, 'order_detail.html', {'order': order})
 
+def order_confirmation(request):
+    return render(request, 'order_confirmation.html')
+
 def add_to_cart(request, product_id):  # Добавление продукта в корзину
     product = get_object_or_404(Product, id=product_id)
     cart, _ = Cart.objects.get_or_create(user=request.user)
@@ -91,30 +97,53 @@ def remove_from_cart(request, product_id): # Удаление продукта �
     cart_product.delete()
     return redirect('cart')
 
-@login_required
-def view_cart(request): # Получение корзины пользователя
+def view_cart(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_products = CartProduct.objects.filter(cart=cart)
-    total_price = sum(item.product.price * item.quantity for item in cart_products)
-    return render(request, 'cart.html', {'cart_products': cart_products, 'total_price': total_price})
+    cart_items = []
+    total_price = 0
 
-# 
+    for item in cart_products:
+        item_total = item.quantity * item.product.price
+        cart_items.append({
+            'product': item.product,
+            'quantity': item.quantity,
+            'item_total': item_total
+        })
+        total_price += item_total
 
+    return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
+
+
+@login_required
 def checkout(request):
-    cart = Cart.objects.get(user=request.user)
-    cart_products = CartProduct.objects.filter(cart=cart)
-    total_price = sum(item.product.price * item.quantity for item in cart_products)
+    try:
+        cart = Cart.objects.get(user=request.user)
+        cart_products = CartProduct.objects.filter(cart=cart)
+        if not cart_products.exists():
+            messages.error(request, 'Ваша корзина пуста.')
+            return redirect('cart')
 
-    if request.method == 'POST':
-        order = Order.objects.create(user=request.user, total_price=total_price)
-        for item in cart_products:
-            order.products.add(item.product)  # Assuming 'products' is a ManyToManyField in the Order model
-        order.save()
-        cart_products.delete()  # Очистка корзины после оформления заказа
-        return redirect('order_confirmation')  # Перенаправление на страницу подтверждения
+        total_price = sum(item.product.price * item.quantity for item in cart_products)
 
-    return render(request, 'checkout.html', {'cart_products': cart_products, 'total_price': total_price})
+        if request.method == 'POST':
+            order = Order.objects.create(user=request.user, total_price=total_price)
+            for item in cart_products:
+                order.products.add(item.product)
+            order.save()
+            cart_products.delete()
+            cart.delete()
+            return redirect('order_confirmation')
+
+        return render(request, 'checkout.html', {'cart_products': cart_products, 'total_price': total_price})
+    except Cart.DoesNotExist:
+        messages.error(request, 'У вас нет активной корзины.')
+        return redirect('cart')
 
 def products(request):
     products = Product.objects.all()  # Получение всех продуктов
     return render(request, 'products.html', {'products': products})
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'product_detail.html', {'product': product})

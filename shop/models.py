@@ -3,7 +3,12 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from decimal import Decimal
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
 class Product(models.Model):   #информация о продукте
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -59,6 +64,8 @@ class Profile(models.Model):   #профиль пользователя
 
     def __str__(self):
         return self.user.username
+
+
 
 
 

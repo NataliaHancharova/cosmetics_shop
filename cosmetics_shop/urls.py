@@ -25,8 +25,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),   
-    path('register/', views.register, name='register'), 
-    path('register/form/', views.register_with_form, name='register_form'),
+    path('register/', views.register_with_form, name='register'), 
+    path('register/form/', views.register_with_form, name='register_form'),    # 
     path('login/', views.user_login, name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('dashboard/', views.user_dashboard, name='dashboard'),
@@ -37,5 +37,8 @@ urlpatterns = [
     path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/checkout/', views.checkout, name='checkout'),
     path('products/', views.products, name='products'), 
+    path('products/<int:product_id>/', views.product_detail, name='product_detail'),
+    path('order_confirmation/', views.order_confirmation, name='order_confirmation'),
+    path('order_history/', views.order_history, name='order_history'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
