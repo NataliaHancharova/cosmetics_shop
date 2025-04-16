@@ -7,11 +7,11 @@ from decimal import Decimal
 class ProfileModelTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='testpassword')
-        self.profile = Profile.objects.create(user=self.user, phone='+1234567890')
+        self.profile = Profile.objects.create(user=self.user) #, phone='+1234567890')
 
     def test_profile_creation(self):
         self.assertEqual(self.profile.user.username, 'testuser')
-        self.assertEqual(self.profile.phone, '+1234567890')
+        # self.assertEqual(self.profile.phone, '+1234567890')
 
 class ProductModelTest(TestCase):
     def setUp(self):

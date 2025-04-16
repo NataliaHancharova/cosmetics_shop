@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'cosmetics_shop',
         'USER': 'postgres',
         'PASSWORD': '1851',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
