@@ -1,14 +1,11 @@
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Order, Profile
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
-from .forms import UserCreationForm
-from .models import Profile  # Import the Profile model
 from django.http import HttpResponse
-from .models import Product, Cart, CartProduct
+from .models import Product, Cart, CartProduct, Order, Profile
 from django.contrib.auth.password_validation import validate_password
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
