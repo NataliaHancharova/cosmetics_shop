@@ -24,11 +24,10 @@ def register_with_form(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Сохраняем номер телефона и адрес в модели Profile
+            # Сохраняем номер телефона  в модели Profile
             Profile.objects.create(
                 user=user,
                 phone=form.cleaned_data['phone'],
-            
             )
             messages.success(request, 'Вы успешно зарегистрировались! Теперь вы можете войти.')
             return redirect('login')
