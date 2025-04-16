@@ -7,15 +7,15 @@ from django import forms
 
 
 class CustomUserCreationForm(UserCreationForm):
-    phone = forms.CharField(
-        max_length=15,
-        required=True,
-        label="Номер телефона",
-        widget=forms.TextInput(attrs={'placeholder': '+999999999'}),
-    )
+    # phone = forms.CharField(
+    #     max_length=15,
+    #     required=True,
+    #     label="Номер телефона",
+    #     widget=forms.TextInput(attrs={'placeholder': '+999999999'}),
+    # )
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2', 'phone']
+        fields = ['username', 'email', 'password1', 'password2']
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -93,8 +93,8 @@ class OrderProduct(models.Model):
     
 class Profile(models.Model):   #профиль пользователя
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Номер телефона должен быть в формате: '+999999999'.")
-    phone = models.CharField(validators=[phone_regex], max_length=15)
+    # phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Номер телефона должен быть в формате: '+999999999'.")
+    # phone = models.CharField(validators=[phone_regex], max_length=15)
     created_at = models.DateTimeField(auto_now_add=True)
 
 

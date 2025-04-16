@@ -20,12 +20,13 @@ def register_with_form(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
+            print(form.cleaned_data)  
             user = form.save()
-            # Сохраняем номер телефона  в модели Profile
-            Profile.objects.create(
-                user=user,
-                phone=form.cleaned_data['phone'],
-            )
+            # # # Сохраняем номер телефона  в модели Profile
+            # # Profile.objects.create(
+            # #     user=user,
+            # #     phone=form.cleaned_data['phone'],
+            # )
             messages.success(request, 'Вы успешно зарегистрировались! Теперь вы можете войти.')
             return redirect('login')
         else:
