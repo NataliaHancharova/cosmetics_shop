@@ -93,3 +93,19 @@ class CustomUserCreationFormTest(TestCase):
         }
         form = CustomUserCreationForm(data=form_data)
         self.assertFalse(form.is_valid())
+
+# class RegistrationTest(TestCase):
+#     def test_registration_creates_profile(self):
+#         form_data = {
+#             'username': 'testuser',
+#             'email': 'testuser@example.com',
+#             'password1': 'strongpassword123',
+#             'password2': 'strongpassword123',
+#             'phone': '+1234567890'
+#         }
+#         form = CustomUserCreationForm(data=form_data)
+#         self.assertTrue(form.is_valid())
+#         user = form.save()
+#         profile = Profile.objects.get(user=user)
+#         print(f"Профиль создан с телефоном: {profile.phone}")
+#         self.assertEqual(profile.phone, '+1234567890')

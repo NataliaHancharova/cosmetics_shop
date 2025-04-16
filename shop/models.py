@@ -17,10 +17,12 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2', 'phone']
+
     def save(self, commit=True):
         user = super().save(commit=False)
         if commit:
             user.save()
+            print(f"Сохранение профиля с телефоном: {self.cleaned_data['phone']}")  # Отладочный вывод
             Profile.objects.create(
                 user=user,
                 phone=self.cleaned_data['phone'],
