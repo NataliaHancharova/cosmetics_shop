@@ -1,66 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- <!DOCTYPE html>
+<html lang="ru">
+{% load static %}   
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная страница</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Магазин</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profile' %}">Профиль</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Выход</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Вход</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="{% url 'cart' %}">Корзина</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h1 class="text-center">Добро пожаловать в наш магазин Просто яблоко!</h1>
+        <p>Лучшие товары ждут вас!</p>
+        <div class="row text-center mt-4">
+            <div class="col-md-4">
+                <a href="{% url 'products' %}" class="btn btn-info btn-lg w-100">Каталог товаров</a>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'order_history' %}" class="btn btn-warning btn-lg w-100">История заказов</a>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'cart' %}" class="btn btn-success btn-lg w-100">Перейти в корзину</a>
+            </div>
+        </div>
+    </div>
+    <img src="{% static 'images/main_image.jpg' %}" alt="Главное изображение" class="img-fluid" style="max-width: 100%; height: auto;">
+    <footer class="bg-light text-center text-lg-start mt-5">
+        <div class="text-center p-3">
+            © 2025 Магазин. Все права защищены.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="ru">
+{% load static %}   
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #3ed386; 
-            text-align: center;
+            background: url("{% static 'images/main_image.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            color: white; /* Текст будет белым для контраста */
         }
-        h1 {
-            color: #053102; 
-            margin-top: 20px;
-        }
-        .button-container {
-            margin: 20px auto;
-        }
-        .button {
-            background-color: #2fe21b; 
-            color: white;
-            padding: 15px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px;
-            text-decoration: none;
-            font-size: 16px;
-        }
-        .button:hover {
-            background-color: #011b0f; /* Темнее при наведении */
+        .content {
+            background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон для текста */
+            padding: 20px;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Добро пожаловать в наш интернет-магазин Просто яблоко!</h1>
-    <p>Здесь вы можете найти лучшие предложения косметики.</p>
-    <p>Пожалуйста, <a href="{% url 'login' %}">войдите</a> или <a href="{% url 'register' %}">зарегистрируйтесь</a>, чтобы начать покупки.</p>
-    <p>Если у вас уже есть аккаунт, вы можете <a href="{% url 'dashboard' %}">перейти в личный кабинет</a>.</p>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Магазин</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profile' %}">Профиль</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Выход</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Вход</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="{% url 'cart' %}">Корзина</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <h1>Продукты</h1>
-    <ul> 
-        {% for product in products %}
-        <li>
-            <h2>{{ product.name }}</h2>
-            <p>{{ product.description }}</p>
-            <p>Цена: {{ product.price }} руб.</p>
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 200px; height: auto;">
-        </li>
-        {% endfor %}
-    </ul>
-    <div class="button-container">
-        <a href="{% url 'products' %}" class="button">Посмотреть все продукты</a>
-        <a href="{% url 'cart' %}" class="button">Корзина</a>
-        <a href="{% url 'order_history' %}" class="button">История заказов</a>  
+    <div class="container mt-5 content">
+        <h1 class="text-center">Добро пожаловать в наш магазин Просто яблоко!</h1>
+        <p>Лучшие товары ждут вас!</p>
+        <div class="row text-center mt-4">
+            <div class="col-md-4">
+                <a href="{% url 'products' %}" class="btn btn-info btn-lg w-100">Каталог товаров</a>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'order_history' %}" class="btn btn-warning btn-lg w-100">История заказов</a>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'cart' %}" class="btn btn-success btn-lg w-100">Перейти в корзину</a>
+            </div>
+        </div>
     </div>
-    <div class="button-container">
-        <a href="{% url 'home' %}" class="button">На главную</a> 
-    </div>
-    <footer style="margin-top: 20px; color: #053102;">
-        <p>&copy; 2023 Просто яблоко. Все права защищены.</p>   
+
+    <footer class="bg-light text-center text-lg-start mt-5">
+        <div class="text-center p-3">
+            © 2025 Магазин. Все права защищены.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

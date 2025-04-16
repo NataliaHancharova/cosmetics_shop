@@ -1,35 +1,41 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Order
+from .models import Order, Profile
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from .forms import UserCreationForm
+from .models import Profile  # Import the Profile model
 from django.http import HttpResponse
 from .models import Product, Cart, CartProduct
 from django.contrib.auth.password_validation import validate_password
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from .forms import CustomUserCreationForm
 
 def home(request):
     products = Product.objects.all()  # Получение всех продуктов
     return render(request, 'home.html', {'products': products})
 
 
-def register_with_form(request): # Регистрация пользователя с использованием формы
+def register_with_form(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            messages.success(request, 'Вы успешно зарегистрировались! Теперь вы можете войти.')  # Сохранение пользователя в базе данных
-            login(request, user)  # Автоматический вход после регистрации
-            return redirect('profile')  # Перенаправляем на профиль
-            # return redirect('login') 
+            # Сохраняем номер телефона и адрес в модели Profile
+            Profile.objects.create(
+                user=user,
+                phone=form.cleaned_data['phone'],
+            
+            )
+            messages.success(request, 'Вы успешно зарегистрировались! Теперь вы можете войти.')
+            return redirect('login')
         else:
             messages.error(request, 'Исправьте ошибки в форме.')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
 def create_user(username, email, password): # Создание пользователя
@@ -97,44 +103,26 @@ def add_to_cart(request, product_id):
         if not created:
             cart_product.quantity += 1  # Увеличиваем количество, если товар уже есть в корзине
         else:
-            cart_product.quantity = 1  
-        # cart_product, _ = CartProduct.objects.get_or_create(cart=cart, product=product)
-        # cart_product.quantity += 1
+            cart_product.quantity = 1  # Устанавливаем количество в 1, если товар добавляется впервые
         cart_product.save()
         return redirect('cart')
     return HttpResponse(status=405) 
 
 
 def remove_from_cart(request, product_id): # Удаление продукта из корзины
-    cart, _ = Cart.objects.get_or_create(user=request.user)
-    cart = get_object_or_404(Cart, user=request.user)
-    cart_product = get_object_or_404(CartProduct, cart=cart, product_id=product_id)
-    cart_product.delete()
-    return redirect('cart')
-
+    if request.method == 'POST':
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        cart = get_object_or_404(Cart, user=request.user)
+        cart_product = get_object_or_404(CartProduct, cart=cart, product_id=product_id)
+        cart_product.delete()
+        return redirect('cart')
+    return HttpResponse(status=405)  # Возвращаем 405 Method Not Allowed, если метод не POST
 @login_required
 def view_cart(request):
     cart, _= Cart.objects.get_or_create(user=request.user)
     cart_products = CartProduct.objects.filter(cart=cart)
     total_price = sum(item.product.price * item.quantity for item in cart_products)
-    # for item in cart_products:
-    #     item_total_price = item.product.price * item.quantity  # Вычисляем итоговую цену для каждого продукта
-    #     total_price += item_total_price
     return render(request, 'cart.html', {'cart_products': cart_products, 'total_price': total_price, 'item_total_prices': [item.product.price * item.quantity for item in cart_products]})
-    # cart_items = []
-    # total_price = sum(float(item.product.price) * item.quantity for item in cart_products)
-    
-    # for item in cart_products:
-    #     item_total = item.quantity * item.product.price
-    #     cart_items.append({
-    #         'product': item.product,
-    #         'quantity': item.quantity,
-    #         'item_total': item_total
-    #     })
-    #     total_price += item_total
-
-    # return render(request, 'cart.html', {'cart_products': cart_items, 'total_price': total_price})
-
 
 @login_required
 def checkout(request):
@@ -177,3 +165,7 @@ def product_list(request):
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'product_detail.html', {'product': product})
+
+def custom_logout(request):
+    logout(request)  # Удаляет сессию пользователя
+    return redirect('/')  # Перенаправляет на главную страницу

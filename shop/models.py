@@ -6,10 +6,40 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
+
 class CustomUserCreationForm(UserCreationForm):
+    phone = forms.CharField(
+        max_length=15,
+        required=True,
+        label="Номер телефона",
+        widget=forms.TextInput(attrs={'placeholder': '+999999999'}),
+    )
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2', 'phone',]
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+            Profile.objects.create(
+                user=user,
+                phone=self.cleaned_data['phone'],
+            )
+        return user
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("Это имя пользователя уже занято.")
+        return username
+    
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Пароли не совпадают.")
+        return password2
         
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -63,7 +93,6 @@ class OrderProduct(models.Model):
     
 class Profile(models.Model):   #профиль пользователя
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    address = models.CharField(max_length=255)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Номер телефона должен быть в формате: '+999999999'.")
     phone = models.CharField(validators=[phone_regex], max_length=15)
 
