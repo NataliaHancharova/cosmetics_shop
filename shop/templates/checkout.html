@@ -7,6 +7,12 @@
 </head>
 <body>
     <h1>Оформление заказа</h1>
-    <p>Здесь будет форма для оформления заказа.</p>
+    <p>Общая сумма: {{ total_price }} руб.</p>
+    <p>Общее количество товаров: {{ cart_products|length }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Подтвердить заказ</button>
+    </form>
+    <a href="{% url 'cart' %}" class="btn btn-secondary">Вернуться в корзину</a>
 </body>
 </html>

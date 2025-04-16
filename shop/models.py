@@ -36,7 +36,7 @@ class CartProduct(models.Model):  #продукты в корзине
     quantity = models.PositiveIntegerField(default=1)
 
 class Order(models.Model):  #заказ
-    id = models.AutoField(primary_key=True)  # Explicitly define the id field
+    id = models.AutoField(primary_key=True)  #уникальный идентификатор заказа
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Processing', 'Processing'),
@@ -45,7 +45,6 @@ class Order(models.Model):  #заказ
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     products = models.ManyToManyField(Product, through='OrderProduct')
-    
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     quantity = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)

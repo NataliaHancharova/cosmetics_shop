@@ -146,13 +146,18 @@ def checkout(request):
             return redirect('cart')
 
         total_price = sum(item.product.price * item.quantity for item in cart_products)
+        total_quantity = sum(item.quantity for item in cart_products)
 
         if request.method == 'POST':
-            order = Order.objects.create(user=request.user, total_price=total_price)
+            order = Order.objects.create(user=request.user, 
+                                         total_price=total_price,
+                                        quantity=total_quantity)
             for item in cart_products:
                 order.products.add(item.product)
             order.save()
             cart_products.delete()
+
+            messages.success(request, 'Ваш заказ успешно оформлен!')
             return redirect('order_confirmation')
 
         return render(request, 'checkout.html', {'cart_products': cart_products, 'total_price': total_price})
