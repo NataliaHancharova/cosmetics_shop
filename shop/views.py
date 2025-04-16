@@ -92,22 +92,18 @@ def order_confirmation(request):
 def add_to_cart(request, product_id):
     if request.method == 'POST':
         product = get_object_or_404(Product, id=product_id)
-        cart, _ = Cart.objects.get_or_create(user=request.user)
-        cart_product, _ = CartProduct.objects.get_or_create(cart=cart, product=product)
-        cart_product.quantity += 1
+        cart, _= Cart.objects.get_or_create(user=request.user)
+        cart_product, created = CartProduct.objects.get_or_create(cart=cart, product=product)
+        if not created:
+            cart_product.quantity += 1  # Увеличиваем количество, если товар уже есть в корзине
+        else:
+            cart_product.quantity = 1  
+        # cart_product, _ = CartProduct.objects.get_or_create(cart=cart, product=product)
+        # cart_product.quantity += 1
         cart_product.save()
-        return render(request, 'add_to_card.html', {'product': product})
-        # return redirect('cart')
+        return redirect('cart')
     return HttpResponse(status=405) 
 
-# def add_to_cart(request, product_id):  # Добавление продукта в корзину
-#     product = get_object_or_404(Product, id=product_id)
-#     cart, created = Cart.objects.get_or_create(user=request.user)  # Получение или создание корзины для пользователя
-#     # cart, _ = Cart.objects.get_or_create(user=request.user)
-#     cart_product, _ = CartProduct.objects.get_or_create(cart=cart, product=product)
-#     cart_product.quantity += 1
-#     cart_product.save()
-#     return redirect('cart')
 
 def remove_from_cart(request, product_id): # Удаление продукта из корзины
     cart, _ = Cart.objects.get_or_create(user=request.user)
@@ -116,22 +112,28 @@ def remove_from_cart(request, product_id): # Удаление продукта �
     cart_product.delete()
     return redirect('cart')
 
+@login_required
 def view_cart(request):
-    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart, _= Cart.objects.get_or_create(user=request.user)
     cart_products = CartProduct.objects.filter(cart=cart)
-    cart_items = []
-    total_price = 0
+    total_price = sum(item.product.price * item.quantity for item in cart_products)
+    # for item in cart_products:
+    #     item_total_price = item.product.price * item.quantity  # Вычисляем итоговую цену для каждого продукта
+    #     total_price += item_total_price
+    return render(request, 'cart.html', {'cart_products': cart_products, 'total_price': total_price, 'item_total_prices': [item.product.price * item.quantity for item in cart_products]})
+    # cart_items = []
+    # total_price = sum(float(item.product.price) * item.quantity for item in cart_products)
+    
+    # for item in cart_products:
+    #     item_total = item.quantity * item.product.price
+    #     cart_items.append({
+    #         'product': item.product,
+    #         'quantity': item.quantity,
+    #         'item_total': item_total
+    #     })
+    #     total_price += item_total
 
-    for item in cart_products:
-        item_total = item.quantity * item.product.price
-        cart_items.append({
-            'product': item.product,
-            'quantity': item.quantity,
-            'item_total': item_total
-        })
-        total_price += item_total
-
-    return render(request, 'cart.html', {'cart_products': cart_items, 'total_price': total_price})
+    # return render(request, 'cart.html', {'cart_products': cart_items, 'total_price': total_price})
 
 
 @login_required
@@ -161,6 +163,10 @@ def checkout(request):
 def products(request):
     products = Product.objects.all()  # Получение всех продуктов
     return render(request, 'products.html', {'products': products})
+
+def product_list(request):
+    products = Product.objects.all()
+    return render(request, 'product_list.html', {'products': products})
 
 @login_required
 def product_detail(request, product_id):

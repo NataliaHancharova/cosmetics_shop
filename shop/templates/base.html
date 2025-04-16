@@ -6,6 +6,15 @@
     <title>{% block title %}Просто яблоко{% endblock %}</title>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Магазин</a>
+            <div class="navbar-nav">
+                <a href="{% url 'cart' %}" class="btn btn-primary">Корзина</a>
+            </div>
+        </div>
+    </nav>
+    
     <header>
         {% if user.is_authenticated %}
             Привет, {{ user.username }}! <a href="{% url 'logout' %}">Выход</a>
@@ -18,3 +27,6 @@
     </main>
 </body>
 </html>
+
+
+
